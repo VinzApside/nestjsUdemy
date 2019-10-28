@@ -5,7 +5,14 @@ import { CreateTaskDto } from './dto/create-task.dto';
 
 @Injectable()
 export class TasksService {
-  private tasks: Task[] = [];
+  private tasks: Task[] = [
+    {
+      id: 'test',
+      status: TaskStatus.OPEN,
+      description: 'test',
+      title: 'test',
+    },
+  ];
 
   getAllTasks(): Task[] {
     return this.tasks;
@@ -15,7 +22,7 @@ export class TasksService {
     return this.tasks.find(task => task.id === id);
   }
 
-  createTask(createTaskDto: CreateTaskDto) {
+  createTask(createTaskDto: CreateTaskDto): Task {
     const { title, description } = createTaskDto;
 
     const task: Task = {
@@ -25,6 +32,12 @@ export class TasksService {
       status: TaskStatus.OPEN,
     };
     this.tasks = [...this.tasks, task];
+    return task;
+  }
+
+  updateTaskStatus(id: string, status: TaskStatus): Task {
+    let task = this.getTaskById(id);
+    task.status = status;
     return task;
   }
 
