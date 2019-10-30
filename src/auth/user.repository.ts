@@ -3,6 +3,8 @@ import { User } from './user.entity';
 import { EntityRepository, Repository } from 'typeorm';
 import { ConflictException } from '@nestjs/common';
 
+import * as bcrypt from 'bcrypt';
+
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
   async signUp(authCredentialsDto: AuthCredentialsDto): Promise<void> {
@@ -12,7 +14,8 @@ export class UserRepository extends Repository<User> {
 
     const user = new User();
     user.username = username;
-    user.password = password;
+    user.salt = await bcrypt.genSalt();
+    user.password = await this.hashPassword(password, user.salt);
     try {
       await user.save();
     } catch (error) {
@@ -20,5 +23,9 @@ export class UserRepository extends Repository<User> {
         throw new ConflictException('Username already exists');
       }
     }
+  }
+
+  private async hashPassword(password: string, salt: string): Promise<string> {
+    return bcrypt.hash(password, salt);
   }
 }
