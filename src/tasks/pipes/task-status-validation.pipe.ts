@@ -16,7 +16,7 @@ export class TaskStatusValidationPipe implements PipeTransform {
     // console.log('metadata', metadata);
     value = value.toUpperCase();
     if (!this.isStatusValid(value)) {
-      throw new BadRequestException(`${value} is an indalid status`);
+      throw new BadRequestException(`${value} is an invalid status`);
     }
     return value;
   }
